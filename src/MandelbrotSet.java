@@ -10,7 +10,7 @@ import java.io.IOException;
 public class MandelbrotSet extends JComponent {
     private final int WIDTH = 640;
     private final int HEIGHT = 480;
-    private final int ITERATIONS = 100;
+    private final int ITERATIONS = 200;
     private final float SCALE_HORIZONTAL = 4.0f;
     private final float SCALE_VERTICAL = 4.0f;
     private BufferedImage buffer;
@@ -22,10 +22,10 @@ public class MandelbrotSet extends JComponent {
     public void renderImage() {
         for (int realCoordinate = 0; realCoordinate < WIDTH; realCoordinate++) {
             for (int imaginaryCoordinate = 0; imaginaryCoordinate < HEIGHT; imaginaryCoordinate++) {
-                float cReal = (realCoordinate - WIDTH / 2.0f) * SCALE_HORIZONTAL / WIDTH;
-                float cImaginary = (imaginaryCoordinate - HEIGHT / 2.0f) * SCALE_VERTICAL / WIDTH;
+                float constantReal = (realCoordinate - WIDTH / 2.0f) * SCALE_HORIZONTAL / WIDTH;
+                float constantImaginary = (imaginaryCoordinate - HEIGHT / 2.0f) * SCALE_VERTICAL / WIDTH;
 
-                int color = calculateColor(cReal, cImaginary);
+                int color = calculateColor(constantReal, constantImaginary);
 
                 buffer.setRGB(realCoordinate, imaginaryCoordinate, color);
             }
@@ -33,13 +33,14 @@ public class MandelbrotSet extends JComponent {
     }
 
     public int calculateColor(float real, float imaginary) {
-        Complex c = new Complex(real, imaginary);
-        Complex z = c;
+        Complex constant = new Complex(real, imaginary);
+        Complex zFunction = Complex.ZERO;
 
-        for (int i = 1; i < ITERATIONS; i++) {
-            z = z.pow(2).add(c);
+        for (int i = 0; i < ITERATIONS; i++) {
+            zFunction = constant.multiply(zFunction.cos());
 
-            if (z.getReal() * z.getReal() + z.getImaginary() * z.getImaginary() > 4) {
+            if (zFunction.getReal() * zFunction.getReal() +
+                    zFunction.getImaginary() * zFunction.getImaginary() > 4) {
                 return Color.HSBtoRGB((float) i / ITERATIONS, 0.5f, 1);
             }
         }
@@ -47,7 +48,7 @@ public class MandelbrotSet extends JComponent {
         return 0x00000000;
     }
 
-    public void displayImage(){
+    public void displayImage() {
         JFrame frame = new JFrame("RSA Project 18");
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setResizable(true);
@@ -56,7 +57,7 @@ public class MandelbrotSet extends JComponent {
         frame.setVisible(true);
     }
 
-    public void saveImage(){
+    public void saveImage() {
         try {
             ImageIO.write(buffer, "png", new File("mandelbrot.png"));
         } catch (IOException e) {
