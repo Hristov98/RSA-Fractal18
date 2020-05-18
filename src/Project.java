@@ -5,7 +5,6 @@ public class Project {
         MandelbrotSet set = new MandelbrotSet();
         set.initialiseBuffer();
         set.renderImage();
-        set.displayImage();
         set.saveImage();
 
         long endTime = System.currentTimeMillis();
