@@ -7,41 +7,37 @@ import java.io.File;
 import java.io.IOException;
 
 public class MandelbrotSet {
-    private final int WIDTH;
-    private final int HEIGHT;
-    private final float REAL_UPPER_LIMIT;
-    private final float REAL_LOWER_LIMIT;
-    private final float IMAGINARY_UPPER_LIMIT;
-    private final float IMAGINARY_LOWER_LIMIT;
+    private int width;
+    private int height;
+    private float realUpperLimit;
+    private float realLowerLimit;
+    private float imaginaryUpperLimit;
+    private float imaginaryLowerLimit;
+    private int numberOfThreads;
+    private String outputName;
     private final int ITERATIONS = 500;
+    private boolean isQuiet;
     private BufferedImage buffer;
 
     MandelbrotSet() {
-        WIDTH = 640;
-        HEIGHT = 480;
-        REAL_UPPER_LIMIT = 2.0f;
-        REAL_LOWER_LIMIT = -2.0f;
-        IMAGINARY_UPPER_LIMIT = 2.0f;
-        IMAGINARY_LOWER_LIMIT = -2.0f;
-    }
-
-    MandelbrotSet(int width, int height, float realLower, float realUpper,
-                  float imaginaryLower, float imaginaryUpper) {
-        WIDTH = width;
-        HEIGHT = height;
-        REAL_UPPER_LIMIT = realUpper;
-        REAL_LOWER_LIMIT = realLower;
-        IMAGINARY_UPPER_LIMIT = imaginaryUpper;
-        IMAGINARY_LOWER_LIMIT = imaginaryLower;
+        width = 640;
+        height = 480;
+        realUpperLimit = 2.0f;
+        realLowerLimit = -2.0f;
+        imaginaryUpperLimit = 2.0f;
+        imaginaryLowerLimit = -2.0f;
+        numberOfThreads = 1;
+        outputName = "zad18.png";
+        isQuiet = false;
     }
 
     public void initialiseBuffer() {
-        buffer = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
+        buffer = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
     }
 
     public void renderImage() {
-        for (int realCoordinate = 0; realCoordinate < WIDTH; realCoordinate++) {
-            for (int imaginaryCoordinate = 0; imaginaryCoordinate < HEIGHT; imaginaryCoordinate++) {
+        for (int realCoordinate = 0; realCoordinate < width; realCoordinate++) {
+            for (int imaginaryCoordinate = 0; imaginaryCoordinate < height; imaginaryCoordinate++) {
                 float constantReal = getConstantReal(realCoordinate);
                 float constantImaginary = getConstantImaginary(imaginaryCoordinate);
                 int color = calculateColor(constantReal, constantImaginary);
@@ -52,13 +48,13 @@ public class MandelbrotSet {
     }
 
     private float getConstantReal(int realCoordinate) {
-        return realCoordinate * (REAL_UPPER_LIMIT - REAL_LOWER_LIMIT) / WIDTH
-                + REAL_LOWER_LIMIT;
+        return realCoordinate * (realUpperLimit - realLowerLimit) / width
+                + realLowerLimit;
     }
 
     private float getConstantImaginary(int imaginaryCoordinate) {
-        return imaginaryCoordinate * (IMAGINARY_UPPER_LIMIT - IMAGINARY_LOWER_LIMIT) / HEIGHT
-                + IMAGINARY_LOWER_LIMIT;
+        return imaginaryCoordinate * (imaginaryUpperLimit - imaginaryLowerLimit) / height
+                + imaginaryLowerLimit;
     }
 
     private int calculateColor(float real, float imaginary) {
@@ -82,9 +78,34 @@ public class MandelbrotSet {
 
     public void saveImage() {
         try {
-            ImageIO.write(buffer, "png", new File("result.png"));
+            ImageIO.write(buffer, "png", new File(outputName));
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void setImageSize(int height, int width) {
+        this.height = height;
+        this.width = width;
+    }
+
+    public void setRectangleBoundaries(float realLowerLimit, float realUpperLimit,
+                                   float imaginaryLowerLimit,float imaginaryUpperLimit) {
+        this.realLowerLimit = realLowerLimit;
+        this.realUpperLimit = realUpperLimit;
+        this.imaginaryLowerLimit = imaginaryLowerLimit;
+        this.imaginaryUpperLimit = imaginaryUpperLimit;
+    }
+
+    public void setNumberOfThreads(int numberOfThreads) {
+        this.numberOfThreads = numberOfThreads;
+    }
+
+    public void setOutputName(String outputName) {
+        this.outputName = outputName;
+    }
+
+    public void setQuiet() {
+        isQuiet = true;
     }
 }
