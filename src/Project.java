@@ -5,9 +5,10 @@ public class Project {
         MandelbrotSet set = new MandelbrotSet();
         set.initialiseBuffer();
         set.renderImage();
-        set.saveImage();
 
         long endTime = System.currentTimeMillis();
         System.out.println("Execution took " + (endTime - startTime) + " milliseconds");
+
+        set.saveImage();
     }
 }
