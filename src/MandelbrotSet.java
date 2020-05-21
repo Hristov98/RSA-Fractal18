@@ -16,7 +16,6 @@ public class MandelbrotSet {
     private int numberOfThreads;
     private String outputName;
     private final int ITERATIONS = 500;
-    private boolean isQuiet;
     private BufferedImage buffer;
 
     MandelbrotSet() {
@@ -28,53 +27,113 @@ public class MandelbrotSet {
         imaginaryLowerLimit = -2.0f;
         numberOfThreads = 1;
         outputName = "zad18.png";
-        isQuiet = false;
     }
 
     public void initialiseBuffer() {
         buffer = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
     }
 
+    private class MandelbrotRunnable implements Runnable {
+        private int renderFrom;
+        private int renderTo;
+        boolean quietModeIsNotActive;
+
+        MandelbrotRunnable(int from, int to, boolean quiet) {
+            renderFrom = from;
+            renderTo = to;
+            quietModeIsNotActive = quiet;
+        }
+
+        @Override
+        public void run() {
+            long startTime = System.currentTimeMillis();
+
+            printStartMessage();
+            renderRows();
+            printEndMessage(startTime);
+        }
+
+        private void printStartMessage() {
+            if (quietModeIsNotActive) {
+                System.out.println(Thread.currentThread().getName() + " started.");
+            }
+        }
+
+        private void renderRows() {
+            for (int imaginaryCoordinate = renderFrom; imaginaryCoordinate < renderTo; imaginaryCoordinate++) {
+                for (int realCoordinate = 0; realCoordinate < width; realCoordinate++) {
+                    float constantReal = getConstantReal(realCoordinate);
+                    float constantImaginary = getConstantImaginary(imaginaryCoordinate);
+                    int color = calculateColor(constantReal, constantImaginary);
+
+                    buffer.setRGB(realCoordinate, imaginaryCoordinate, color);
+                }
+            }
+        }
+
+        private float getConstantReal(int realCoordinate) {
+            return realCoordinate * (realUpperLimit - realLowerLimit) / width
+                    + realLowerLimit;
+        }
+
+        private float getConstantImaginary(int imaginaryCoordinate) {
+            return imaginaryCoordinate * (imaginaryUpperLimit - imaginaryLowerLimit) / height
+                    + imaginaryLowerLimit;
+        }
+
+        private int calculateColor(float real, float imaginary) {
+            Complex constant = new Complex(real, imaginary);
+            Complex zFunction = Complex.ZERO;
+
+            for (int currentIterations = 0; currentIterations < ITERATIONS; currentIterations++) {
+                zFunction = constant.multiply(zFunction.cos());
+
+                if (isOutOfBounds(zFunction)) {
+                    return Color.HSBtoRGB((float) currentIterations / ITERATIONS, 0.67f, 1);
+                }
+            }
+
+            return 0x00000000;
+        }
+
+        private boolean isOutOfBounds(Complex z) {
+            return z.getReal() * z.getReal() + z.getImaginary() * z.getImaginary() > 4;
+        }
+
+        private void printEndMessage(long startTime) {
+            if (quietModeIsNotActive) {
+                System.out.println(Thread.currentThread().getName() + " stopped.");
+                System.out.println(Thread.currentThread().getName() + " execution time was (millis): " +
+                        (System.currentTimeMillis() - startTime));
+            }
+        }
+
+    }
+
     public void renderImage() {
-        for (int realCoordinate = 0; realCoordinate < width; realCoordinate++) {
-            for (int imaginaryCoordinate = 0; imaginaryCoordinate < height; imaginaryCoordinate++) {
-                float constantReal = getConstantReal(realCoordinate);
-                float constantImaginary = getConstantImaginary(imaginaryCoordinate);
-                int color = calculateColor(constantReal, constantImaginary);
+        int rowsPerThread = height / numberOfThreads;
 
-                buffer.setRGB(realCoordinate, imaginaryCoordinate, color);
+        Thread[] threads = new Thread[numberOfThreads];
+        for (int i = 0; i < numberOfThreads; i++) {
+            int startFrom = i * rowsPerThread;
+            int endAt = i * rowsPerThread + rowsPerThread;
+
+            threads[i] = new Thread(new MandelbrotRunnable(startFrom, endAt, true));
+            threads[i].setName("Thread " + i);
+
+            threads[i].start();
+        }
+
+        for (int i = 0; i < numberOfThreads; i++) {
+            try {
+                threads[i].join();
+            } catch (InterruptedException e) {
+                System.out.println(threads[i].getName() + " has throws InterruptedException.");
             }
         }
     }
 
-    private float getConstantReal(int realCoordinate) {
-        return realCoordinate * (realUpperLimit - realLowerLimit) / width
-                + realLowerLimit;
-    }
 
-    private float getConstantImaginary(int imaginaryCoordinate) {
-        return imaginaryCoordinate * (imaginaryUpperLimit - imaginaryLowerLimit) / height
-                + imaginaryLowerLimit;
-    }
-
-    private int calculateColor(float real, float imaginary) {
-        Complex constant = new Complex(real, imaginary);
-        Complex zFunction = Complex.ZERO;
-
-        for (int currentIterations = 0; currentIterations < ITERATIONS; currentIterations++) {
-            zFunction = constant.multiply(zFunction.cos());
-
-            if (isOutOfBounds(zFunction)) {
-                return Color.HSBtoRGB((float) currentIterations / ITERATIONS, 0.67f, 1);
-            }
-        }
-
-        return 0x00000000;
-    }
-
-    private boolean isOutOfBounds(Complex z) {
-        return z.getReal() * z.getReal() + z.getImaginary() * z.getImaginary() > 4;
-    }
 
     public void saveImage() {
         try {
@@ -90,7 +149,7 @@ public class MandelbrotSet {
     }
 
     public void setRectangleBoundaries(float realLowerLimit, float realUpperLimit,
-                                   float imaginaryLowerLimit,float imaginaryUpperLimit) {
+                                       float imaginaryLowerLimit, float imaginaryUpperLimit) {
         this.realLowerLimit = realLowerLimit;
         this.realUpperLimit = realUpperLimit;
         this.imaginaryLowerLimit = imaginaryLowerLimit;
@@ -101,11 +160,14 @@ public class MandelbrotSet {
         this.numberOfThreads = numberOfThreads;
     }
 
+    public int getNumberOfThreads() {
+        return numberOfThreads;
+    }
+
     public void setOutputName(String outputName) {
         this.outputName = outputName;
     }
 
     public void setQuiet() {
-        isQuiet = true;
     }
 }

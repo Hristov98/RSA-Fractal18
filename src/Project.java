@@ -1,13 +1,14 @@
 public class Project {
     public static void main(String[] args) {
-        long startTime = System.currentTimeMillis();
+        long startProgram = System.currentTimeMillis();
 
         MandelbrotSet set = new MandelbrotSet();
         set.initialiseBuffer();
         set.renderImage();
 
-        long endTime = System.currentTimeMillis();
-        System.out.println("Execution took " + (endTime - startTime) + " milliseconds");
+        System.out.println("Threads used in current run: " + set.getNumberOfThreads());
+        System.out.println("Total execution time for current run (millis): "
+                + (System.currentTimeMillis() - startProgram));
 
         set.saveImage();
     }
