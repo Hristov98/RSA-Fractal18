@@ -1,10 +1,10 @@
 package task18;
 
-public class MandelbrotRunnable implements Runnable {
+public class CoarseGranularityRunnable implements Runnable {
     private final int renderFrom;
     private final int renderTo;
 
-    MandelbrotRunnable(int threadNumber, int rowsToRender) {
+    CoarseGranularityRunnable(int threadNumber, int rowsToRender) {
         renderFrom = threadNumber * rowsToRender;
         renderTo = threadNumber * rowsToRender + rowsToRender;
     }

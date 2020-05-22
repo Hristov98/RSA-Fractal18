@@ -20,6 +20,7 @@ public class MandelbrotSet {
     public static boolean isQuiet;
     public static final int ITERATIONS = 500;
     public static BufferedImage buffer;
+    public static boolean[] threadIsActive;
 
     MandelbrotSet() {
         width = 640;
@@ -28,7 +29,7 @@ public class MandelbrotSet {
         realLowerLimit = -2.0f;
         imaginaryUpperLimit = 2.0f;
         imaginaryLowerLimit = -2.0f;
-        numberOfThreads = 4;
+        numberOfThreads = 16;
         outputName = "zad18.png";
         isQuiet = false;
 
@@ -42,7 +43,7 @@ public class MandelbrotSet {
         Thread[] threads = new Thread[numberOfThreads];
         int threadNumber = 0;
         for (; threadNumber < numberOfThreads; threadNumber++) {
-            threads[threadNumber] = new Thread(new MandelbrotRunnable(threadNumber, rowsPerThread));
+            threads[threadNumber] = new Thread(new CoarseGranularityRunnable(threadNumber, rowsPerThread));
             threads[threadNumber].setName("Thread " + threadNumber);
 
             threads[threadNumber].start();
@@ -70,11 +71,39 @@ public class MandelbrotSet {
         }
     }
 
-    public void  renderRowsWithMediumGranularity(){
+    public void renderRowsWithMediumGranularity() {
+        int currentRowToRender = 0;
+
+        Thread[] threads = new Thread[numberOfThreads];
+        threadIsActive = new boolean[numberOfThreads];
+        for (int i = 0; i < numberOfThreads; i++) {
+            threadIsActive[i] = false;
+        }
+
+        while (currentRowToRender < height) {
+            int threadIndex = 0;
+            for (; threadIndex < numberOfThreads; threadIndex++) {
+                if (!threadIsActive[threadIndex]) {
+                    threads[threadIndex] = new Thread(new MediumGranularityRunnable(threadIndex, currentRowToRender++));
+                    threads[threadIndex].setName("Thread " + threadIndex);
+                    threads[threadIndex].start();
+                }
+            }
+
+            for (int i = 0; i < numberOfThreads; i++) {
+                try {
+                    threads[i].join();
+                } catch (InterruptedException e) {
+                    System.out.println(threads[i].getName() + " has thrown InterruptedException.");
+                }
+            }
+        }
+
+
 
     }
 
-    public void  renderRowsWithFineGranularity(){
+    public void renderRowsWithFineGranularity() {
 
     }
 
@@ -113,30 +142,5 @@ public class MandelbrotSet {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public void setImageSize(int height, int width) {
-        MandelbrotSet.height = height;
-        MandelbrotSet.width = width;
-    }
-
-    public void setRectangleBoundaries(float realLowerLimit, float realUpperLimit,
-                                       float imaginaryLowerLimit, float imaginaryUpperLimit) {
-        MandelbrotSet.realLowerLimit = realLowerLimit;
-        MandelbrotSet.realUpperLimit = realUpperLimit;
-        MandelbrotSet.imaginaryLowerLimit = imaginaryLowerLimit;
-        MandelbrotSet.imaginaryUpperLimit = imaginaryUpperLimit;
-    }
-
-    public void setNumberOfThreads(int numberOfThreads) {
-        this.numberOfThreads = numberOfThreads;
-    }
-
-    public void setOutputName(String outputName) {
-        MandelbrotSet.outputName = outputName;
-    }
-
-    public void setQuiet() {
-        isQuiet = true;
     }
 }
