@@ -30,49 +30,50 @@ public class MandelbrotSet {
         realLowerLimit = -2.0f;
         imaginaryUpperLimit = 2.0f;
         imaginaryLowerLimit = -2.0f;
-        numberOfThreads = 16;
+        numberOfThreads = 9;
         outputName = "zad18.png";
         isQuiet = false;
         threadIsActive = new Vector<>();
 
         buffer = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
     }
-/*
-    public void renderImageWithCoarseGranularity() {
-        int rowsPerThread = MandelbrotSet.height / numberOfThreads;
-        int rowsLeftUnassigned = height % rowsPerThread;
 
-        Thread[] threads = new Thread[numberOfThreads];
-        int threadNumber = 0;
-        for (; threadNumber < numberOfThreads; threadNumber++) {
-            threads[threadNumber] = new Thread(new CoarseGranularityRunnable(threadNumber, rowsPerThread));
-            threads[threadNumber].setName("Thread " + threadNumber);
+    /*
+        public void renderImageWithCoarseGranularity() {
+            int rowsPerThread = MandelbrotSet.height / numberOfThreads;
+            int rowsLeftUnassigned = height % rowsPerThread;
 
-            threads[threadNumber].start();
-        }
+            Thread[] threads = new Thread[numberOfThreads];
+            int threadNumber = 0;
+            for (; threadNumber < numberOfThreads; threadNumber++) {
+                threads[threadNumber] = new Thread(new CoarseGranularityRunnable(threadNumber, rowsPerThread));
+                threads[threadNumber].setName("Thread " + threadNumber);
 
-        for (int i = 0; i < numberOfThreads; i++) {
-            try {
-                threads[i].join();
-            } catch (InterruptedException e) {
-                System.out.println(threads[i].getName() + " has thrown InterruptedException.");
+                threads[threadNumber].start();
             }
-        }
 
-        if (rowsLeftUnassigned != 0) {
-            System.out.printf("Filling in the last %d rows...\n", rowsLeftUnassigned);
-            for (int imaginaryCoordinate = height - rowsLeftUnassigned; imaginaryCoordinate < height; imaginaryCoordinate++) {
-                for (int realCoordinate = 0; realCoordinate < width; realCoordinate++) {
-                    float constantReal = getConstantReal(realCoordinate);
-                    float constantImaginary = getConstantImaginary(imaginaryCoordinate);
-                    int color = calculateColor(constantReal, constantImaginary);
+            for (int i = 0; i < numberOfThreads; i++) {
+                try {
+                    threads[i].join();
+                } catch (InterruptedException e) {
+                    System.out.println(threads[i].getName() + " has thrown InterruptedException.");
+                }
+            }
 
-                    buffer.setRGB(realCoordinate, imaginaryCoordinate, color);
+            if (rowsLeftUnassigned != 0) {
+                System.out.printf("Filling in the last %d rows...\n", rowsLeftUnassigned);
+                for (int imaginaryCoordinate = height - rowsLeftUnassigned; imaginaryCoordinate < height; imaginaryCoordinate++) {
+                    for (int realCoordinate = 0; realCoordinate < width; realCoordinate++) {
+                        float constantReal = getConstantReal(realCoordinate);
+                        float constantImaginary = getConstantImaginary(imaginaryCoordinate);
+                        int color = calculateColor(constantReal, constantImaginary);
+
+                        buffer.setRGB(realCoordinate, imaginaryCoordinate, color);
+                    }
                 }
             }
         }
-    }
-*/
+    */
     public void renderRowsWithMediumGranularity() {
         Thread[] threads = new Thread[numberOfThreads];
         for (int threadIndex = 0; threadIndex < numberOfThreads; threadIndex++) {

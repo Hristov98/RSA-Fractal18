@@ -23,7 +23,10 @@ public class MediumGranularityRunnable implements Runnable {
             MandelbrotSet.threadIsActive.set(index, true);
 
             int row = getCurrentRowAndIncrement();
-            renderRow(row);
+            if (row < MandelbrotSet.height) {
+                renderRow(row);
+            }
+
 
             MandelbrotSet.threadIsActive.set(index, false);
         }
@@ -36,7 +39,7 @@ public class MediumGranularityRunnable implements Runnable {
         return currentRow;
     }
 
-    private void renderRow(int row) {
+    private synchronized void renderRow(int row) {
         for (int realCoordinate = 0; realCoordinate < MandelbrotSet.width; realCoordinate++) {
             float constantReal = MandelbrotSet.getConstantReal(realCoordinate);
             float constantImaginary = MandelbrotSet.getConstantImaginary(row);
