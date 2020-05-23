@@ -7,6 +7,7 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Vector;
 
 public class MandelbrotSet {
     public static int width;
@@ -20,11 +21,11 @@ public class MandelbrotSet {
     public static boolean isQuiet;
     public static final int ITERATIONS = 500;
     public static BufferedImage buffer;
-    public static boolean[] threadIsActive;
+    public static Vector<Boolean> threadIsActive;
 
     MandelbrotSet() {
-        width = 640;
-        height = 480;
+        width = 1280;
+        height = 960;
         realUpperLimit = 2.0f;
         realLowerLimit = -2.0f;
         imaginaryUpperLimit = 2.0f;
@@ -32,10 +33,11 @@ public class MandelbrotSet {
         numberOfThreads = 16;
         outputName = "zad18.png";
         isQuiet = false;
+        threadIsActive = new Vector<>();
 
         buffer = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
     }
-
+/*
     public void renderImageWithCoarseGranularity() {
         int rowsPerThread = MandelbrotSet.height / numberOfThreads;
         int rowsLeftUnassigned = height % rowsPerThread;
@@ -70,37 +72,24 @@ public class MandelbrotSet {
             }
         }
     }
-
+*/
     public void renderRowsWithMediumGranularity() {
-        int currentRowToRender = 0;
-
         Thread[] threads = new Thread[numberOfThreads];
-        threadIsActive = new boolean[numberOfThreads];
+        for (int threadIndex = 0; threadIndex < numberOfThreads; threadIndex++) {
+            threadIsActive.add(false);
+            threads[threadIndex] = new Thread(new MediumGranularityRunnable());
+            threads[threadIndex].setName("Thread " + threadIndex);
+
+            threads[threadIndex].start();
+        }
+
         for (int i = 0; i < numberOfThreads; i++) {
-            threadIsActive[i] = false;
-        }
-
-        while (currentRowToRender < height) {
-            int threadIndex = 0;
-            for (; threadIndex < numberOfThreads; threadIndex++) {
-                if (!threadIsActive[threadIndex]) {
-                    threads[threadIndex] = new Thread(new MediumGranularityRunnable(threadIndex, currentRowToRender++));
-                    threads[threadIndex].setName("Thread " + threadIndex);
-                    threads[threadIndex].start();
-                }
-            }
-
-            for (int i = 0; i < numberOfThreads; i++) {
-                try {
-                    threads[i].join();
-                } catch (InterruptedException e) {
-                    System.out.println(threads[i].getName() + " has thrown InterruptedException.");
-                }
+            try {
+                threads[i].join();
+            } catch (InterruptedException e) {
+                System.out.println(threads[i].getName() + " has thrown InterruptedException.");
             }
         }
-
-
-
     }
 
     public void renderRowsWithFineGranularity() {

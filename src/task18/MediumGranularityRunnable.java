@@ -1,24 +1,14 @@
 package task18;
 
 public class MediumGranularityRunnable implements Runnable {
-    private final int threadNumber;
-    private final int rowToRender;
-
-    MediumGranularityRunnable(int threadNumber,int rowToRender) {
-        this.threadNumber=threadNumber;
-        this.rowToRender=rowToRender;
-    }
+    private static int rowToRender = 0;
 
     @Override
     public void run() {
-        MandelbrotSet.threadIsActive[threadNumber] = true;
         long startTime = System.currentTimeMillis();
-
         printStartMessage();
-        renderRow();
+        renderRows();
         printEndMessage(startTime);
-
-        MandelbrotSet.threadIsActive[threadNumber] = false;
     }
 
     private void printStartMessage() {
@@ -27,14 +17,33 @@ public class MediumGranularityRunnable implements Runnable {
         }
     }
 
-    private void renderRow() {
-        for (int realCoordinate = 0; realCoordinate < MandelbrotSet.width; realCoordinate++) {
-                float constantReal = MandelbrotSet.getConstantReal(realCoordinate);
-                float constantImaginary = MandelbrotSet.getConstantImaginary(rowToRender);
-                int color = MandelbrotSet.calculateColor(constantReal, constantImaginary);
+    private void renderRows() {
+        while (rowToRender < MandelbrotSet.height) {
+            int index = MandelbrotSet.threadIsActive.indexOf(false);
+            MandelbrotSet.threadIsActive.set(index, true);
 
-                MandelbrotSet.buffer.setRGB(realCoordinate, rowToRender, color);
-            }
+            int row = getCurrentRowAndIncrement();
+            renderRow(row);
+
+            MandelbrotSet.threadIsActive.set(index, false);
+        }
+    }
+
+    private synchronized int getCurrentRowAndIncrement() {
+        int currentRow = rowToRender;
+        rowToRender++;
+
+        return currentRow;
+    }
+
+    private void renderRow(int row) {
+        for (int realCoordinate = 0; realCoordinate < MandelbrotSet.width; realCoordinate++) {
+            float constantReal = MandelbrotSet.getConstantReal(realCoordinate);
+            float constantImaginary = MandelbrotSet.getConstantImaginary(row);
+            int color = MandelbrotSet.calculateColor(constantReal, constantImaginary);
+
+            MandelbrotSet.buffer.setRGB(realCoordinate, row, color);
+        }
     }
 
     private void printEndMessage(long startTime) {
