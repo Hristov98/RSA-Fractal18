@@ -19,16 +19,10 @@ public class MediumGranularityRunnable implements Runnable {
 
     private void renderRows() {
         while (rowToRender < MandelbrotSet.height) {
-            int index = MandelbrotSet.threadIsActive.indexOf(false);
-            MandelbrotSet.threadIsActive.set(index, true);
-
             int row = getCurrentRowAndIncrement();
             if (row < MandelbrotSet.height) {
                 renderRow(row);
             }
-
-
-            MandelbrotSet.threadIsActive.set(index, false);
         }
     }
 

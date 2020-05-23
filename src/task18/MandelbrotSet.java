@@ -3,11 +3,10 @@ package task18;
 import org.apache.commons.math3.complex.Complex;
 
 import javax.imageio.ImageIO;
-import java.awt.Color;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.Vector;
 
 public class MandelbrotSet {
     public static int width;
@@ -21,7 +20,6 @@ public class MandelbrotSet {
     public static boolean isQuiet;
     public static final int ITERATIONS = 500;
     public static BufferedImage buffer;
-    public static Vector<Boolean> threadIsActive;
 
     MandelbrotSet() {
         width = 1280;
@@ -30,10 +28,9 @@ public class MandelbrotSet {
         realLowerLimit = -2.0f;
         imaginaryUpperLimit = 2.0f;
         imaginaryLowerLimit = -2.0f;
-        numberOfThreads = 9;
+        numberOfThreads = 6;
         outputName = "zad18.png";
         isQuiet = false;
-        threadIsActive = new Vector<>();
 
         buffer = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
     }
@@ -77,10 +74,8 @@ public class MandelbrotSet {
     public void renderRowsWithMediumGranularity() {
         Thread[] threads = new Thread[numberOfThreads];
         for (int threadIndex = 0; threadIndex < numberOfThreads; threadIndex++) {
-            threadIsActive.add(false);
             threads[threadIndex] = new Thread(new MediumGranularityRunnable());
             threads[threadIndex].setName("Thread " + threadIndex);
-
             threads[threadIndex].start();
         }
 
