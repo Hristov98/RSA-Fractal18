@@ -3,6 +3,8 @@ package task18;
 
 import org.apache.commons.cli.*;
 
+import java.awt.image.BufferedImage;
+
 public class Project {
     public static void main(String[] args) {
         long startProgram = System.currentTimeMillis();
@@ -27,15 +29,15 @@ public class Project {
 
     private static void processArguments(String[] args) throws ParseException {
         Options options = new Options();
-        options.addOption("s", "sets the size of the image " +
+        options.addOption("s", true, "sets the size of the image " +
                 "(if missing or invalid, the default value is 640x480)");
-        options.addOption("r", "sets the rectangle which will be observed" +
+        options.addOption("r",true, "sets the rectangle which will be observed" +
                 "(if missing or invalid, the default value is -2.0:2.0:-2.0:2.0)");
-        options.addOption("t", "sets the number of threads that will be executed " +
+        options.addOption("t",true, "sets the number of threads that will be executed " +
                 "(if missing or invalid, the default value is 1)");
-        options.addOption("o", "sets the name of the file saved after calculations are finished" +
+        options.addOption("o",true, "sets the name of the file saved after calculations are finished" +
                 "(if missing or invalid, the default value is zad18.png)");
-        options.addOption("q", "runs the program in quiet mode finished which hides all messages " +
+        options.addOption("q",false, "runs the program in quiet mode finished which hides all messages " +
                 "excluding the execution time (if missing or invalid, the default value is zad18.png)");
 
         CommandLineParser parser = new DefaultParser();
@@ -47,6 +49,8 @@ public class Project {
             int newHeight = Integer.parseInt(dimensions[1]);
             MandelbrotSet.width = newWidth;
             MandelbrotSet.height = newHeight;
+
+            MandelbrotSet.buffer = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_RGB);
         }
 
         if (line.hasOption("r")) {
@@ -64,9 +68,7 @@ public class Project {
         }
 
         if (line.hasOption("t")) {
-            int newThreads = Integer.parseInt(line.getOptionValue("t"));
-
-            MandelbrotSet.numberOfThreads = newThreads;
+            MandelbrotSet.numberOfThreads = Integer.parseInt(line.getOptionValue("t"));
         }
 
         if (line.hasOption("o")) {

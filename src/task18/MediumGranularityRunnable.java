@@ -18,22 +18,26 @@ public class MediumGranularityRunnable implements Runnable {
     }
 
     private void renderRows() {
-        while (rowToRender < MandelbrotSet.height) {
-            int row = getCurrentRowAndIncrement();
-            if (row < MandelbrotSet.height) {
-                renderRow(row);
+        while (true) {
+            int row = getCurrentRow();
+            if (row >= MandelbrotSet.height) {
+                return;
+            } else {
+                incrementRow();
+                renderCurrentRow(row);
             }
         }
     }
 
-    private synchronized int getCurrentRowAndIncrement() {
-        int currentRow = rowToRender;
-        rowToRender++;
-
-        return currentRow;
+    private synchronized int getCurrentRow() {
+        return rowToRender;
     }
 
-    private synchronized void renderRow(int row) {
+    private synchronized void incrementRow() {
+        rowToRender++;
+    }
+
+    private void renderCurrentRow(int row) {
         for (int realCoordinate = 0; realCoordinate < MandelbrotSet.width; realCoordinate++) {
             float constantReal = MandelbrotSet.getConstantReal(realCoordinate);
             float constantImaginary = MandelbrotSet.getConstantImaginary(row);
