@@ -22,13 +22,13 @@ public class MandelbrotSet {
     public static BufferedImage buffer;
 
     MandelbrotSet() {
-        width = 1280;
-        height = 960;
+        width = 640;
+        height = 480;
         realUpperLimit = 2.0f;
         realLowerLimit = -2.0f;
         imaginaryUpperLimit = 2.0f;
         imaginaryLowerLimit = -2.0f;
-        numberOfThreads = 6;
+        numberOfThreads = 1;
         outputName = "zad18.png";
         isQuiet = false;
 
@@ -86,10 +86,6 @@ public class MandelbrotSet {
                 System.out.println(threads[i].getName() + " has thrown InterruptedException.");
             }
         }
-    }
-
-    public void renderRowsWithFineGranularity() {
-
     }
 
     public static float getConstantReal(int realCoordinate) {

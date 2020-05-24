@@ -20,5 +20,18 @@
         <jarDirectory url="file://$MODULE_DIR$/../commons-math3-3.6.1" recursive="false" type="SOURCES" />
       </library>
     </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/../commons-cli-1.4" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/../commons-cli-1.4" />
+        </SOURCES>
+        <jarDirectory url="file://$MODULE_DIR$/../commons-cli-1.4" recursive="false" />
+        <jarDirectory url="file://$MODULE_DIR$/../commons-cli-1.4" recursive="false" type="SOURCES" />
+      </library>
+    </orderEntry>
   </component>
 </module>
