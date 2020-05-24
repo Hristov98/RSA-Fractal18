@@ -56,10 +56,10 @@ public class Project {
         if (line.hasOption("r")) {
             String[] dimensions = line.getOptionValue("r").split(":");
 
-            int newRealLowerLimit = Integer.parseInt(dimensions[0]);
-            int newRealUpperLimit = Integer.parseInt(dimensions[1]);
-            int newImaginaryLowerLimit = Integer.parseInt(dimensions[2]);
-            int newImaginaryUpperLimit = Integer.parseInt(dimensions[3]);
+            float newRealLowerLimit = Float.parseFloat(dimensions[0]);
+            float newRealUpperLimit = Float.parseFloat(dimensions[1]);
+            float newImaginaryLowerLimit = Float.parseFloat(dimensions[2]);
+            float newImaginaryUpperLimit = Float.parseFloat(dimensions[3]);
 
             MandelbrotSet.realLowerLimit = newRealLowerLimit;
             MandelbrotSet.realUpperLimit = newRealUpperLimit;

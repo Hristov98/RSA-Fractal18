@@ -24,10 +24,10 @@ public class MandelbrotSet {
     MandelbrotSet() {
         width = 640;
         height = 480;
-        realUpperLimit = 2.0f;
         realLowerLimit = -2.0f;
-        imaginaryUpperLimit = 2.0f;
+        realUpperLimit = 2.0f;
         imaginaryLowerLimit = -2.0f;
+        imaginaryUpperLimit = 2.0f;
         numberOfThreads = 1;
         outputName = "zad18.png";
         isQuiet = false;
