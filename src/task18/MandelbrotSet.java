@@ -1,7 +1,6 @@
 package task18;
 
 import org.apache.commons.math3.complex.Complex;
-
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -35,10 +34,10 @@ public class MandelbrotSet {
         buffer = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
     }
 
-    public void renderRowsWithMediumGranularity() {
+    public void renderImage() {
         Thread[] threads = new Thread[numberOfThreads];
         for (int threadIndex = 0; threadIndex < numberOfThreads; threadIndex++) {
-            threads[threadIndex] = new Thread(new MediumGranularityRunnable());
+            threads[threadIndex] = new Thread(new MandelbrotRunnable());
             threads[threadIndex].setName("Thread " + threadIndex);
             threads[threadIndex].start();
         }
@@ -70,7 +69,7 @@ public class MandelbrotSet {
             zFunction = constant.multiply(zFunction.cos());
 
             if (isOutOfBounds(zFunction)) {
-                return Color.HSBtoRGB((float) currentIterations / MandelbrotSet.ITERATIONS, 0.67f, 1);
+                return Color.HSBtoRGB((float) 10 * currentIterations / MandelbrotSet.ITERATIONS, 0.67f, 1);
             }
         }
 
@@ -78,7 +77,7 @@ public class MandelbrotSet {
     }
 
     public static boolean isOutOfBounds(Complex z) {
-        return z.getReal() * z.getReal() + z.getImaginary() * z.getImaginary() > 4;
+        return (z.getReal() * z.getReal() + z.getImaginary() * z.getImaginary()) > 100;
     }
 
     public void saveImage() {

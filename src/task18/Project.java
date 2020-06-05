@@ -1,8 +1,6 @@
 package task18;
 
-
 import org.apache.commons.cli.*;
-
 import java.awt.image.BufferedImage;
 
 public class Project {
@@ -10,12 +8,14 @@ public class Project {
         long startProgram = System.currentTimeMillis();
 
         MandelbrotSet set = new MandelbrotSet();
+
         try {
             processArguments(args);
         } catch (ParseException e) {
             System.out.println("ParseException thrown.");
         }
-        set.renderRowsWithMediumGranularity();
+
+        set.renderImage();
 
         if (!MandelbrotSet.isQuiet) {
             System.out.println("Threads used in current run: " + MandelbrotSet.numberOfThreads);
@@ -31,13 +31,13 @@ public class Project {
         Options options = new Options();
         options.addOption("s", true, "sets the size of the image " +
                 "(if missing or invalid, the default value is 640x480)");
-        options.addOption("r",true, "sets the rectangle which will be observed" +
+        options.addOption("r", true, "sets the rectangle which will be observed" +
                 "(if missing or invalid, the default value is -2.0:2.0:-2.0:2.0)");
-        options.addOption("t",true, "sets the number of threads that will be executed " +
+        options.addOption("t", true, "sets the number of threads that will be executed " +
                 "(if missing or invalid, the default value is 1)");
-        options.addOption("o",true, "sets the name of the file saved after calculations are finished" +
+        options.addOption("o", true, "sets the name of the file saved after calculations are finished" +
                 "(if missing or invalid, the default value is zad18.png)");
-        options.addOption("q",false, "runs the program in quiet mode finished which hides all messages " +
+        options.addOption("q", false, "runs the program in quiet mode finished which hides all messages " +
                 "excluding the execution time (if missing or invalid, the default value is zad18.png)");
 
         CommandLineParser parser = new DefaultParser();

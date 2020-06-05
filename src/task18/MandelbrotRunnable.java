@@ -1,6 +1,6 @@
 package task18;
 
-public class MediumGranularityRunnable implements Runnable {
+public class MandelbrotRunnable implements Runnable {
     private static int rowToRender = 0;
 
     @Override
