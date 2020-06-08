@@ -15,7 +15,13 @@ public class Project {
             System.out.println("ParseException thrown.");
         }
 
-        set.renderImage();
+        if (MandelbrotSet.granularity > 0) {
+            set.calculateSegments();
+            set.renderImageWithGranularity();
+        } else {
+            set.renderImage();
+        }
+
 
         if (!MandelbrotSet.isQuiet) {
             System.out.println("Threads used in current run: " + MandelbrotSet.numberOfThreads);
@@ -37,6 +43,8 @@ public class Project {
                 "(if missing or invalid, the default value is 1)");
         options.addOption("o", true, "sets the name of the file saved after calculations are finished" +
                 "(if missing or invalid, the default value is zad18.png)");
+        options.addOption("g", true, "sets the granularity (if missing or invalid, " +
+                "each thread will render 1 row of the image per iteration)");
         options.addOption("q", false, "runs the program in quiet mode finished which hides all messages " +
                 "excluding the execution time (if missing or invalid, the default value is zad18.png)");
 
@@ -52,7 +60,6 @@ public class Project {
 
             MandelbrotSet.buffer = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_RGB);
         }
-
         if (line.hasOption("r")) {
             String[] dimensions = line.getOptionValue("r").split(":");
 
@@ -66,7 +73,6 @@ public class Project {
             MandelbrotSet.imaginaryLowerLimit = newImaginaryLowerLimit;
             MandelbrotSet.imaginaryUpperLimit = newImaginaryUpperLimit;
         }
-
         if (line.hasOption("t")) {
             MandelbrotSet.numberOfThreads = Integer.parseInt(line.getOptionValue("t"));
         }
@@ -74,7 +80,9 @@ public class Project {
         if (line.hasOption("o")) {
             MandelbrotSet.outputName = line.getOptionValue("o");
         }
-
+        if (line.hasOption("g")) {
+            MandelbrotSet.granularity = Integer.parseInt(line.getOptionValue("g"));
+        }
         if (line.hasOption("q")) {
             MandelbrotSet.isQuiet = true;
         }

@@ -1,6 +1,7 @@
 package task18;
 
 import org.apache.commons.math3.complex.Complex;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -20,6 +21,10 @@ public class MandelbrotSet {
     public static final int ITERATIONS = 500;
     public static BufferedImage buffer;
 
+    public static int granularity;
+    public static int rowsInOneSegment;
+    public static int segmentCount;
+
     MandelbrotSet() {
         width = 640;
         height = 480;
@@ -31,6 +36,8 @@ public class MandelbrotSet {
         outputName = "zad18.png";
         isQuiet = false;
 
+        granularity = 0;
+
         buffer = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
     }
 
@@ -38,6 +45,37 @@ public class MandelbrotSet {
         Thread[] threads = new Thread[numberOfThreads];
         for (int threadIndex = 0; threadIndex < numberOfThreads; threadIndex++) {
             threads[threadIndex] = new Thread(new MandelbrotRunnable());
+            threads[threadIndex].setName("Thread " + threadIndex);
+            threads[threadIndex].start();
+        }
+
+        for (int i = 0; i < numberOfThreads; i++) {
+            try {
+                threads[i].join();
+            } catch (InterruptedException e) {
+                System.out.println(threads[i].getName() + " has thrown InterruptedException.");
+            }
+        }
+    }
+
+    public void calculateSegments() {
+        segmentCount = numberOfThreads * granularity;
+        rowsInOneSegment = height / segmentCount;
+        int leftoverRows = height % segmentCount;
+
+        if (leftoverRows != 0) {
+           rowsInOneSegment++;
+        }
+    }
+
+    public void renderImageWithGranularity() {
+        if (!isQuiet) {
+            System.out.printf("The workload has been divided into %d segments\n",segmentCount);
+        }
+
+        Thread[] threads = new Thread[numberOfThreads];
+        for (int threadIndex = 0; threadIndex < numberOfThreads; threadIndex++) {
+            threads[threadIndex] = new Thread(new GranularityRunnable());
             threads[threadIndex].setName("Thread " + threadIndex);
             threads[threadIndex].start();
         }
