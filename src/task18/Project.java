@@ -15,13 +15,8 @@ public class Project {
             System.out.println("ParseException thrown.");
         }
 
-        if (MandelbrotSet.granularity > 0) {
-            set.calculateSegments();
-            set.renderImageWithGranularity();
-        } else {
-            set.renderImage();
-        }
-
+        set.calculateSegments();
+        set.renderImage();
 
         if (!MandelbrotSet.isQuiet) {
             System.out.println("Threads used in current run: " + MandelbrotSet.numberOfThreads);

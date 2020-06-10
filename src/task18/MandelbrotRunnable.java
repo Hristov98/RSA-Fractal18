@@ -1,7 +1,8 @@
 package task18;
 
 public class MandelbrotRunnable implements Runnable {
-    private static int rowToRender = 0;
+    private static int segmentToRender = 0;
+    private final int rowsPerSegment = MandelbrotSet.rowsInOneSegment;
 
     @Override
     public void run() {
@@ -19,22 +20,42 @@ public class MandelbrotRunnable implements Runnable {
 
     private void renderRows() {
         while (true) {
-            int row = getCurrentRow();
-            if (row >= MandelbrotSet.height) {
+            int segment = getCurrentSegment();
+            if (segment >= MandelbrotSet.segmentCount) {
                 return;
             } else {
-                incrementRow();
-                renderCurrentRow(row);
+                incrementSegment();
+                renderCurrentSegment(segment);
             }
         }
     }
 
-    private synchronized int getCurrentRow() {
-        return rowToRender;
+    private synchronized int getCurrentSegment() {
+        return segmentToRender;
     }
 
-    private synchronized void incrementRow() {
-        rowToRender++;
+    private synchronized void incrementSegment() {
+        segmentToRender++;
+    }
+
+    private void renderCurrentSegment(int segment) {
+        int start = segment * rowsPerSegment;
+        int end = start + rowsPerSegment;
+        if (start > MandelbrotSet.height) {
+            return;
+        }
+        if (end > MandelbrotSet.height) {
+            end = MandelbrotSet.height;
+        }
+
+        if (!MandelbrotSet.isQuiet && rowsPerSegment!=1) {
+            System.out.printf(Thread.currentThread().getName() + " is rendering segment %d with rows %d to %d. \n",
+                    segment, start, end - 1);
+        }
+
+        for (int y = start; y < end; y++) {
+            renderCurrentRow(y);
+        }
     }
 
     private void renderCurrentRow(int row) {

@@ -26,17 +26,17 @@ public class MandelbrotSet {
     public static int segmentCount;
 
     MandelbrotSet() {
-        width = 640;
-        height = 480;
+        width = 1920;
+        height = 1440;
         realLowerLimit = -2.0f;
         realUpperLimit = 2.0f;
         imaginaryLowerLimit = -2.0f;
         imaginaryUpperLimit = 2.0f;
-        numberOfThreads = 1;
+        numberOfThreads = 2;
         outputName = "zad18.png";
         isQuiet = false;
 
-        granularity = 0;
+        granularity = 2;
 
         buffer = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
     }
@@ -59,33 +59,17 @@ public class MandelbrotSet {
     }
 
     public void calculateSegments() {
-        segmentCount = numberOfThreads * granularity;
-        rowsInOneSegment = height / segmentCount;
-        int leftoverRows = height % segmentCount;
+        if (MandelbrotSet.granularity > 0) {
+            segmentCount = numberOfThreads * granularity;
+            rowsInOneSegment = height / segmentCount;
+            int leftoverRows = height % segmentCount;
 
-        if (leftoverRows != 0) {
-           rowsInOneSegment++;
-        }
-    }
-
-    public void renderImageWithGranularity() {
-        if (!isQuiet) {
-            System.out.printf("The workload has been divided into %d segments\n",segmentCount);
-        }
-
-        Thread[] threads = new Thread[numberOfThreads];
-        for (int threadIndex = 0; threadIndex < numberOfThreads; threadIndex++) {
-            threads[threadIndex] = new Thread(new GranularityRunnable());
-            threads[threadIndex].setName("Thread " + threadIndex);
-            threads[threadIndex].start();
-        }
-
-        for (int i = 0; i < numberOfThreads; i++) {
-            try {
-                threads[i].join();
-            } catch (InterruptedException e) {
-                System.out.println(threads[i].getName() + " has thrown InterruptedException.");
+            if (leftoverRows != 0) {
+                rowsInOneSegment++;
             }
+        } else {
+            segmentCount= height;
+            rowsInOneSegment = 1;
         }
     }
 
