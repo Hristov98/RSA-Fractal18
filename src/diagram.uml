@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement />
+  <nodes>
+    <node x="445.0855815304983" y="0.0">task18.MandelbrotSet</node>
+    <node x="917.3333333333334" y="184.4814814814815">task18.Project</node>
+    <node x="925.651219225222" y="96.99999999999989">task18.MandelbrotRunnable</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="task18.Project" target="task18.MandelbrotSet">
+      <point x="-0.0" y="5.000000000000001" />
+      <point x="-5.6843418860808015E-14" y="4.999999999999999" />
+    </edge>
+    <edge source="task18.MandelbrotRunnable" target="task18.MandelbrotSet">
+      <point x="0.0" y="5.0" />
+      <point x="0.0" y="5.000000000000001" />
+    </edge>
+    <edge source="task18.MandelbrotSet" target="task18.MandelbrotRunnable">
+      <point x="0.0" y="-5.0" />
+      <point x="0.0" y="-5.0" />
+    </edge>
+  </edges>
+  <settings layout="Circular" zoom="0.84375" x="578.0" y="246.0" />
+  <SelectedNodes>
+    <node>task18.Project</node>
+  </SelectedNodes>
+  <Categories>
+    <Category>Fields</Category>
+    <Category>Constructors</Category>
+    <Category>Methods</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+
