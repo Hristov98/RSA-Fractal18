@@ -23,14 +23,14 @@ public class MandelbrotSet {
     public static BufferedImage buffer;
 
     MandelbrotSet() {
-        width = 640;
-        height = 480;
-        realLowerLimit = -2.0f;
+        width = 2000;
+        height = 2000;
+        realLowerLimit = -0.0f;
         realUpperLimit = 2.0f;
-        imaginaryLowerLimit = -2.0f;
-        imaginaryUpperLimit = 2.0f;
-        numberOfThreads = 1;
-        outputName = "zad18.png";
+        imaginaryLowerLimit = -1.5f;
+        imaginaryUpperLimit = 1.5f;
+        numberOfThreads = 6;
+        outputName = "zad18-gran.png";
         isQuiet = false;
 
         granularity = 0;
